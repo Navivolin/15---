@@ -24,14 +24,12 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    // Предполагаем, что у всех записей одинаковое количество полей (как в примере)
     int field_count = db.records[0].field_count;
     printf("Найдено записей: %d, полей в записи: %d\n", db.record_count, field_count);
 
     printf("\nДоступные поля для сортировки:\n");
     for (int i = 0; i < field_count; i++) {
         printf("  %d - Поле %d", i, i + 1);
-        // Пытаемся угадать тип поля по первой записи
         if (db.records[0].fields[i].type == TYPE_NUMERIC) {
             printf(" (числовое)\n");
         } else {
@@ -47,7 +45,6 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // Создаем массив указателей для сортировки (без перемещения самих записей)
     Record** ptr_array = malloc(sizeof(Record*) * db.record_count);
     for (int i = 0; i < db.record_count; i++) {
         ptr_array[i] = &db.records[i];
@@ -64,8 +61,7 @@ int main(int argc, char* argv[]) {
     }
 
     printf("Готово!\n");
-
-    // Очистка памяти
+    
     free(ptr_array);
     free_database(&db);
 

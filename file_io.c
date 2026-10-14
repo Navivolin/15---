@@ -4,7 +4,6 @@
 #include <string.h>
 #include <ctype.h>
 
-// Проверка, является ли строка числом
 static int is_numeric(const char* str) {
     char* endptr;
     strtod(str, &endptr);
@@ -16,7 +15,6 @@ static int is_numeric(const char* str) {
     return 1;
 }
 
-// Освобождение памяти
 void free_database(Database* db) {
     if (!db || !db->records) return;
     for (int i = 0; i < db->record_count; i++) {
@@ -33,7 +31,6 @@ void free_database(Database* db) {
     db->record_count = 0;
 }
 
-// Добавление поля в запись
 static void add_field_to_record(Record* rec, const char* token) {
     rec->fields = realloc(rec->fields, sizeof(Field) * (rec->field_count + 1));
     Field* f = &rec->fields[rec->field_count];
@@ -48,11 +45,9 @@ static void add_field_to_record(Record* rec, const char* token) {
     rec->field_count++;
 }
 
-// Разбор строки на поля (разделитель - запятая)
 static void parse_line_into_record(Record* rec, char* line) {
     char* token = strtok(line, ",");
     while (token != NULL) {
-        // Убираем пробелы в начале и конце
         while (isspace((unsigned char)*token)) token++;
         char* end = token + strlen(token) - 1;
         while (end > token && isspace((unsigned char)*end)) {
@@ -82,12 +77,9 @@ int load_database(const char* filename, Database* db) {
     int in_record = 0;
 
     while ((read = getline(&line, &len, file)) != -1) {
-        // Удаляем символ новой строки
         if (read > 0 && line[read - 1] == '\n') {
             line[read - 1] = '\0';
         }
-
-        // Если строка пустая - конец текущей записи
         if (strlen(line) == 0) {
             if (in_record) {
                 db->records = realloc(db->records, sizeof(Record) * (db->record_count + 1));
@@ -103,7 +95,6 @@ int load_database(const char* filename, Database* db) {
         }
     }
 
-    // Добавляем последнюю запись, если файл не заканчивается пустой строкой
     if (in_record) {
         db->records = realloc(db->records, sizeof(Record) * (db->record_count + 1));
         db->records[db->record_count] = current_record;
@@ -134,7 +125,7 @@ int save_database(const char* filename, Database* db, Record** sorted_records) {
                 fprintf(file, ",");
             }
         }
-        fprintf(file, "\n\n"); // Разделитель записей
+        fprintf(file, "\n\n");
     }
 
     fclose(file);

@@ -1,8 +1,3 @@
-
----
-
-### `Makefile`
-```makefile
 CC = gcc
 CFLAGS = -Wall -Wextra -O2 -std=c11
 TARGET = db_sorter

@@ -2,7 +2,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-// Сравнение двух записей по указанному полю
 static int compare_records(Record* a, Record* b, int field_idx) {
     if (field_idx >= a->field_count || field_idx >= b->field_count) {
         return 0;
@@ -16,14 +15,12 @@ static int compare_records(Record* a, Record* b, int field_idx) {
         if (f1->value.num_val > f2->value.num_val) return 1;
         return 0;
     } else {
-        // Если хотя бы одно поле строковое, сравниваем как строки
         const char* s1 = (f1->type == TYPE_STRING) ? f1->value.str_val : "";
         const char* s2 = (f2->type == TYPE_STRING) ? f2->value.str_val : "";
         return strcmp(s1, s2);
     }
 }
 
-// Слияние для сортировки
 static void merge(Record** arr, int left, int mid, int right, int field_idx) {
     int i, j, k;
     int n1 = mid - left + 1;
@@ -68,7 +65,6 @@ static void merge(Record** arr, int left, int mid, int right, int field_idx) {
     free(R);
 }
 
-// Рекурсивная сортировка слиянием
 static void merge_sort(Record** arr, int left, int right, int field_idx) {
     if (left < right) {
         int mid = left + (right - left) / 2;
@@ -78,7 +74,6 @@ static void merge_sort(Record** arr, int left, int right, int field_idx) {
     }
 }
 
-// Публичная функция сортировки
 void sort_records(Record** records, int count, int field_idx) {
     if (count > 1) {
         merge_sort(records, 0, count - 1, field_idx);

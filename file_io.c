@@ -70,17 +70,17 @@ int load_database(const char* filename, Database* db) {
     db->records = NULL;
     db->record_count = 0;
 
-    char* line = NULL;
-    size_t len = 0;
-    ssize_t read;
-
+    
+    char line[1024]; 
     Record current_record = {NULL, 0};
     int in_record = 0;
 
-    while ((read = getline(&line, &len, file)) != -1) {
-        if (read > 0 && line[read - 1] == '\n') {
-            line[read - 1] = '\0';
+    while (fgets(line, sizeof(line), file) != NULL) {
+        size_t len = strlen(line);
+        if (len > 0 && line[len - 1] == '\n') {
+            line[len - 1] = '\0';
         }
+
         if (strlen(line) == 0) {
             if (in_record) {
                 db->records = realloc(db->records, sizeof(Record) * (db->record_count + 1));
@@ -95,14 +95,6 @@ int load_database(const char* filename, Database* db) {
             in_record = 1;
         }
     }
-
-    if (in_record) {
-        db->records = realloc(db->records, sizeof(Record) * (db->record_count + 1));
-        db->records[db->record_count] = current_record;
-        db->record_count++;
-    }
-
-    free(line);
     fclose(file);
     return 0;
 }

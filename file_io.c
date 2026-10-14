@@ -40,7 +40,8 @@ static void add_field_to_record(Record* rec, const char* token) {
         f->value.num_val = strtod(token, NULL);
     } else {
         f->type = TYPE_STRING;
-        f->value.str_val = strdup(token);
+        f->value.str_val = malloc(strlen(token) + 1);
+        strcpy(f->value.str_val, token);
     }
     rec->field_count++;
 }

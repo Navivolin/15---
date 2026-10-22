@@ -16,9 +16,11 @@ static int is_numeric(const char* str) {
 }
 
 void free_database(Database* db) {
+
+    Record* rec;
     if (!db || !db->records) return;
     for (int i = 0; i < db->record_count; i++) {
-        Record* rec = &db->records[i];
+        rec = &db->records[i];
         for (int j = 0; j < rec->field_count; j++) {
             if (rec->fields[j].type == TYPE_STRING) {
                 free(rec->fields[j].value.str_val);
@@ -32,8 +34,10 @@ void free_database(Database* db) {
 }
 
 static void add_field_to_record(Record* rec, const char* token) {
+
+    Field* f;
     rec->fields = realloc(rec->fields, sizeof(Field) * (rec->field_count + 1));
-    Field* f = &rec->fields[rec->field_count];
+    f = &rec->fields[rec->field_count];
     
     if (is_numeric(token)) {
         f->type = TYPE_NUMERIC;
@@ -47,10 +51,13 @@ static void add_field_to_record(Record* rec, const char* token) {
 }
 
 static void parse_line_into_record(Record* rec, char* line) {
-    char* token = strtok(line, ",");
+    char* token;
+
+    char* end;
+    token = strtok(line, ",");
     while (token != NULL) {
         while (isspace((unsigned char)*token)) token++;
-        char* end = token + strlen(token) - 1;
+        end = token + strlen(token) - 1;
         while (end > token && isspace((unsigned char)*end)) {
             *end = '\0';
             end--;
@@ -61,7 +68,11 @@ static void parse_line_into_record(Record* rec, char* line) {
 }
 
 int load_database(const char* filename, Database* db) {
-    FILE* file = fopen(filename, "r");
+    FILE* file;
+    char line[1024];
+    Record current_record;
+    int in_record;
+    file = fopen(filename, "r");
     if (!file) {
         perror("Ошибка открытия файла");
         return -1;
@@ -71,9 +82,10 @@ int load_database(const char* filename, Database* db) {
     db->record_count = 0;
 
     
-    char line[1024]; 
-    Record current_record = {NULL, 0};
-    int in_record = 0;
+ //   current_record = {NULL, 0};
+    current_record.fields = NULL;
+    current_record.field_count = 0;
+    in_record = 0;
 
     while (fgets(line, sizeof(line), file) != NULL) {
         size_t len = strlen(line);
@@ -100,14 +112,17 @@ int load_database(const char* filename, Database* db) {
 }
 
 int save_database(const char* filename, Database* db, Record** sorted_records) {
-    FILE* file = fopen(filename, "w");
+    FILE* file;
+    Record* rec
+    file = fopen(filename, "w");
     if (!file) {
         perror("Ошибка открытия файла для записи");
         return -1;
     }
 
     for (int i = 0; i < db->record_count; i++) {
-        Record* rec = sorted_records[i];
+        
+        rec = sorted_records[i];
         for (int j = 0; j < rec->field_count; j++) {
             if (rec->fields[j].type == TYPE_STRING) {
                 fprintf(file, "%s", rec->fields[j].value.str_val);

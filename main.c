@@ -5,13 +5,16 @@
 #include "sort.h"
 
 int main(int argc, char* argv[]) {
+    int field_count;
+    int choice;
+    Database db;
+    Record** ptr_array;
     if (argc != 2) {
         fprintf(stderr, "Использование: %s <файл_базы_данных>\n", argv[0]);
         return 1;
     }
 
     const char* filename = argv[1];
-    Database db;
 
     printf("Загрузка базы данных из '%s'...\n", filename);
     if (load_database(filename, &db) != 0) {
@@ -24,7 +27,7 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    int field_count = db.records[0].field_count;
+    field_count = db.records[0].field_count;
     printf("Найдено записей: %d, полей в записи: %d\n", db.record_count, field_count);
 
     printf("\nДоступные поля для сортировки:\n");
@@ -37,7 +40,6 @@ int main(int argc, char* argv[]) {
         }
     }
 
-    int choice;
     printf("\nВыберите номер поля для сортировки (0-%d): ", field_count - 1);
     if (scanf("%d", &choice) != 1 || choice < 0 || choice >= field_count) {
         fprintf(stderr, "Некорректный ввод.\n");
@@ -45,7 +47,7 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    Record** ptr_array = malloc(sizeof(Record*) * db.record_count);
+    ptr_array = malloc(sizeof(Record*) * db.record_count);
     for (int i = 0; i < db.record_count; i++) {
         ptr_array[i] = &db.records[i];
     }

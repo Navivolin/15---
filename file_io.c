@@ -113,7 +113,7 @@ int load_database(const char* filename, Database* db) {
 
 int save_database(const char* filename, Database* db, Record** sorted_records) {
     FILE* file;
-    Record* rec
+    Record* rec;
     file = fopen(filename, "w");
     if (!file) {
         perror("Ошибка открытия файла для записи");

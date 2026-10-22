@@ -9,12 +9,13 @@ int main(int argc, char* argv[]) {
     int choice;
     Database db;
     Record** ptr_array;
+    const char* filename;
     if (argc != 2) {
         fprintf(stderr, "Использование: %s <файл_базы_данных>\n", argv[0]);
         return 1;
     }
 
-    const char* filename = argv[1];
+    filename = argv[1];
 
     printf("Загрузка базы данных из '%s'...\n", filename);
     if (load_database(filename, &db) != 0) {
